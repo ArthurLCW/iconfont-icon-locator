@@ -1,20 +1,27 @@
-<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>SVG Highlighter</title>
+    <meta charset="UTF-8" />
+    <title>图片上传与处理示例</title>
     <style>
-      body {
-        width: 300px;
+      /* body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
       }
-      #svgInput {
-        width: calc(100% - 22px);
-      }
+
+      input,
+      button {
+        margin-bottom: 10px;
+      } */
     </style>
+    <script src="script.js"></script>
   </head>
+
   <body>
-    <h1>SVG Highlighter</h1>
-    <input type="text" id="svgInput" placeholder="Enter SVG code" />
-    <button id="highlightButton">Highlight</button>
+    <input type="file" id="fileInput" />
+    <button id="processButton">处理图片</button>
     <script src="popup.js"></script>
   </body>
 </html>

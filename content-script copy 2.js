@@ -25,43 +25,48 @@ chrome.runtime.onMessage.addListener(async function (
 ) {
   console.log("lcw listener", request, sender);
   let target;
-  if (request.type === "highlight") {
-    const img = new Image();
-    img.src = request.payload;
-    img.onload = async function () {
-      const canvas = document.createElement("canvas");
-      canvas.width = 36;
-      canvas.height = 36;
-      var ctx = canvas.getContext("2d");
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
-      target = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var targetUrl = canvas.toDataURL("image/png");
+  // if (request.type === "highlight") {
+  //   const img = new Image();
+  //   img.src = request.payload;
+  //   img.onload = async function () {
+  //     const canvas = document.createElement("canvas");
+  //     canvas.width = 36;
+  //     canvas.height = 36;
+  //     var ctx = canvas.getContext("2d");
+  //     ctx.setTransform(1, 0, 0, 1, 0, 0);
+  //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //     ctx.fillStyle = "#ffffff";
+  //     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  //     ctx.drawImage(img, 0, 0);
+  //     target = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  //     console.log("图片的imageData:", target, pngDatas);
 
-      console.log("图片的imageData:", target, targetUrl, pngDatas);
-
-      /////
-      sendResponse({ farewell: "goodbye" });
-      if (pngDatas.length === 0) {
-        pngDatas = await loadAllSvgs(svgElements);
-      }
-      console.log("lcw target", target);
-      const similarities = [];
-      for (const pngData of pngDatas) {
-        // console.log("lcw iteration", pngData.pngData, target);
-        similarities.push(ssim(pngData.pngData, target));
-      }
-      console.log("lcw ssim", similarities, ssim(target, target));
-    };
-  }
+  //     /////
+  //     sendResponse({ farewell: "goodbye" });
+  //     if (pngDatas.length === 0) {
+  //       pngDatas = await loadAllSvgs(svgElements);
+  //     }
+  //     console.log("lcw target", target);
+  //     const similarities = [];
+  //     for (const pngData of pngDatas) {
+  //       // console.log("lcw iteration", pngData.pngData, target);
+  //       similarities.push(ssim(pngData.pngData, target));
+  //     }
+  //     console.log("lcw ssim", similarities);
+  //   };
+  // }
 
   console.log("lcw pngDatas", { request, sender, pngDatas });
 
-  // const test = ssim(pngUrls[0].pngData, pngUrls[1].pngData);
-  // console.log("lcw ssimold", test, pngUrls[0].idx, pngUrls[1].idx);
+  const test = ssim(pngUrls[0].pngData, pngUrls[1].pngData);
+  console.log(
+    "lcw ssimold",
+    test,
+    pngUrls[0].idx,
+    pngUrls[1].idx,
+    pngUrls[0].pngDataUrl,
+    pngUrls[1].pngDataUrl
+  );
 
   return true;
 });
@@ -87,12 +92,12 @@ function convertSvgToPng(svgElement, index) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
 
-      var pngDataUrl = canvas.toDataURL("image/png");
+      // var pngDataUrl = canvas.toDataURL("image/png");
       var pngData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
       URL.revokeObjectURL(url);
 
-      resolve({ idx: index, pngData: pngData, pngDataUrl: pngDataUrl });
+      resolve({ idx: index, pngData: pngData });
     };
 
     img.onerror = function () {
