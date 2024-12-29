@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "SVG Highlighter",
+  "version": "1.0",
+  "description": "Highlight SVGs on the current page based on user input.",
+  "permissions": ["activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/iconFont.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/contentScript.bundle.js"],
+      "type": "module"
+    }
+  ]
+}
