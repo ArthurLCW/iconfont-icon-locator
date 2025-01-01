@@ -28,6 +28,7 @@ chrome.runtime.onMessage.addListener(async function (
   if (request.type === "highlight") {
     const img = new Image();
     img.src = request.payload;
+    // 目标图片处理
     img.onload = async function () {
       const canvas = document.createElement("canvas");
       canvas.width = 36;
@@ -35,9 +36,9 @@ chrome.runtime.onMessage.addListener(async function (
       var ctx = canvas.getContext("2d");
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "rgba(0, 0, 0, 0)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       target = ctx.getImageData(0, 0, canvas.width, canvas.height);
       var targetUrl = canvas.toDataURL("image/png");
 
@@ -52,9 +53,16 @@ chrome.runtime.onMessage.addListener(async function (
       const similarities = [];
       for (const pngData of pngDatas) {
         // console.log("lcw iteration", pngData.pngData, target);
-        similarities.push(ssim(pngData.pngData, target));
+        similarities.push(
+          ssim(pngData.pngData, pngDatas[0].pngData, {
+            windowSize: 36,
+            ssim: "original",
+            k1: 0.005,
+            k2: 0.01,
+          })
+        );
       }
-      console.log("lcw ssim", similarities, ssim(target, target));
+      console.log("lcw ssim", similarities);
     };
   }
 
@@ -68,6 +76,7 @@ chrome.runtime.onMessage.addListener(async function (
 
 function convertSvgToPng(svgElement, index) {
   return new Promise((resolve, reject) => {
+    // iconfont仓库图片处理
     var canvas = document.createElement("canvas");
     // var svgWidth = svgElement.clientWidth;
     // var svgHeight = svgElement.clientHeight;
@@ -83,9 +92,9 @@ function convertSvgToPng(svgElement, index) {
       var ctx = canvas.getContext("2d");
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "rgba(0, 0, 0, 0)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       var pngDataUrl = canvas.toDataURL("image/png");
       var pngData = ctx.getImageData(0, 0, canvas.width, canvas.height);
